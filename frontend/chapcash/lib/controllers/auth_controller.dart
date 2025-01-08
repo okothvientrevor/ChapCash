@@ -40,7 +40,7 @@ class AuthController extends GetxController {
         token.value = responseData['token'];
         // Store token
         await storage.write('token', token.value);
-        Get.offAllNamed(AppRoutes.HOME);
+        Get.offAllNamed(AppRoutes.MAIN);
       } else {
         error.value = 'Invalid credentials';
       }

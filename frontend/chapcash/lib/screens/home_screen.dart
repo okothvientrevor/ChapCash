@@ -1,13 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controllers/user_controller.dart';
+import '../controllers/transaction_controller.dart';
+import '../controllers/auth_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final RxBool showBalance = true.obs;
+  final userController = Get.find<UserController>();
+  final transactionController = Get.find<TransactionController>();
+  final authController = Get.find<AuthController>();
+
+  @override
+  void onInit() {
+    // Initial data fetch
+    _fetchUserData();
+
+    // Set up periodic refresh (every 30 seconds)
+    ever(transactionController.transactions, (_) {
+      print('Transactions updated');
+      _fetchUserData();
+    });
+
+    // Debug print the token
+    print('Current token: ${authController.token.value}');
+  }
+
+  Future<void> _fetchUserData() async {
+    print('Fetching user data...');
+    await userController.getProfile();
+    print('Profile data: ${userController.profile}');
+    await transactionController.getTransactionHistory();
+    print('Transaction history fetched');
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Initial data fetch when screen loads
+    _fetchUserData();
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -24,26 +56,26 @@ class HomeScreen extends StatelessWidget {
                       radius: 25,
                       backgroundImage: AssetImage('assets/images/avatar.png'),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Welcome, Michael',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Good Morning',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
+                    Obx(() => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Welcome, ${userController.profile.value['name'] ?? 'User'}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Good Morning',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        )),
                     IconButton(
                       icon:
                           const Icon(Icons.notifications, color: Colors.white),
@@ -92,21 +124,15 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Obx(() => Text(
-                            showBalance.value ? '\$5,234.00' : '••••••',
+                            showBalance.value
+                                ? 'UGX ${userController.profile.value['balance']?.toStringAsFixed(2) ?? '0.00'}'
+                                : '••••••',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
                             ),
                           )),
-                      const SizedBox(height: 20),
-                      const Text(
-                        '**** **** **** 1234',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -145,18 +171,20 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Transaction List
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 5, // Example with 5 transactions
-                  itemBuilder: (context, index) {
-                    return _buildTransactionItem(
-                      'Transaction ${index + 1}',
-                      DateTime.now().subtract(Duration(days: index)),
-                      index % 2 == 0 ? -50.0 : 100.0,
-                    );
-                  },
-                ),
+                Obx(() => ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: transactionController.transactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction =
+                            transactionController.transactions[index];
+                        return _buildTransactionItem(
+                          transaction['description'] ?? 'Transaction',
+                          DateTime.parse(transaction['createdAt']),
+                          transaction['amount'].toDouble(),
+                        );
+                      },
+                    )),
               ],
             ),
           ),
@@ -166,25 +194,47 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildActionButton(IconData icon, String label, Color color) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () {
+        switch (label) {
+          case 'Deposit':
+            // Handle deposit
+            print('Deposit tapped');
+            break;
+          case 'Send':
+            // Handle send
+            print('Send tapped');
+            break;
+          case 'Withdraw':
+            // Handle withdraw
+            print('Withdraw tapped');
+            break;
+          case 'Bills':
+            // Handle bills
+            print('Bills tapped');
+            break;
+        }
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color),
           ),
-          child: Icon(icon, color: color),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -219,9 +269,9 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           Text(
-            '${amount.isNegative ? '-' : '+'}\$${amount.abs().toStringAsFixed(2)}',
+            '${amount >= 0 ? '+' : ''}\$${amount.toStringAsFixed(2)}',
             style: TextStyle(
-              color: amount.isNegative ? Colors.red : Colors.green,
+              color: amount >= 0 ? Colors.green : Colors.red,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

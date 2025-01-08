@@ -1,13 +1,18 @@
-import 'package:chapcash/routes/app_routes.dart';
+import 'package:chapcash/bindings/app_binding.dart';
+import 'package:chapcash/screens/main_screen.dart';
 import 'package:get/get.dart';
+import '../screens/home_screen.dart';
 import '../screens/landing_screen.dart';
 import '../screens/login_screen.dart';
-import '../screens/register_screen.dart';
-import '../screens/home_screen.dart';
-import '../controllers/auth_controller.dart';
+import 'app_routes.dart';
 
 class AppPages {
   static final pages = [
+    GetPage(
+      name: AppRoutes.HOME,
+      page: () => HomeScreen(),
+      binding: HomeBinding(), // Add this line
+    ),
     GetPage(
       name: AppRoutes.LANDING,
       page: () => const LandingScreen(),
@@ -15,20 +20,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.LOGIN,
       page: () => const LoginScreen(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut<AuthController>(() => AuthController());
-      }),
     ),
     GetPage(
-      name: AppRoutes.REGISTER,
-      page: () => const RegisterScreen(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut<AuthController>(() => AuthController());
-      }),
-    ),
-    GetPage(
-      name: AppRoutes.HOME,
-      page: () => HomeScreen(),
+      name: AppRoutes.MAIN,
+      page: () => const MainScreen(),
     ),
   ];
 }

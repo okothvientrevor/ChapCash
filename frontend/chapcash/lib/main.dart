@@ -1,3 +1,6 @@
+import 'package:chapcash/bindings/app_binding.dart';
+import 'package:chapcash/routes/app_pages.dart';
+import 'package:chapcash/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'screens/main_screen.dart';
@@ -26,7 +29,9 @@ class MyApp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
       ),
-      home: const MainScreen(),
+      initialBinding: HomeBinding(),
+      initialRoute: AppRoutes.LANDING,
+      getPages: AppPages.pages,
     );
   }
 }

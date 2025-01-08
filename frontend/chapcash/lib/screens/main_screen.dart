@@ -30,10 +30,6 @@ class MainScreen extends StatelessWidget {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.account_balance_wallet),
-              label: 'Wallet',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),
               label: 'Activity',
             ),
