@@ -89,11 +89,6 @@ class ProfileScreen extends GetView<UserController> {
                           'Email',
                           controller.profile.value['email'] ?? 'Not set',
                         ),
-                        _buildDivider(),
-                        _buildInfoTile(
-                          'Phone',
-                          controller.profile.value['phone'] ?? 'Not set',
-                        ),
                       ],
                     ),
                   ),

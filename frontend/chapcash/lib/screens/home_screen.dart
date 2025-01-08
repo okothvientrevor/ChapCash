@@ -93,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                 // Balance Card
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(40),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Colors.purple, Colors.blue],
@@ -175,20 +175,39 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Transaction List
-                Obx(() => ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: transactionController.transactions.length,
-                      itemBuilder: (context, index) {
-                        final transaction =
-                            transactionController.transactions[index];
-                        return _buildTransactionItem(
-                          transaction['description'] ?? 'Transaction',
-                          DateTime.parse(transaction['createdAt']),
-                          transaction['amount'].toDouble(),
-                        );
-                      },
-                    )),
+                // Transaction List with Empty State Message
+                Obx(() {
+                  if (transactionController.transactions.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No transactions to display.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      height:
+                          300, // Set the desired height for the scrollable section
+                      child: ListView.builder(
+                        physics:
+                            const BouncingScrollPhysics(), // Smooth scrolling effect
+                        itemCount: transactionController.transactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction =
+                              transactionController.transactions[index];
+                          return _buildTransactionItem(
+                            transaction['description'] ?? 'Transaction',
+                            DateTime.parse(transaction['createdAt']),
+                            transaction['amount'].toDouble(),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                }),
               ],
             ),
           ),
