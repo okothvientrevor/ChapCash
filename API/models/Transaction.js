@@ -12,14 +12,19 @@ const transactionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: true,
-    enum: ['credit', 'debit'] // You can modify these types based on your needs
+    enum: ['credit', 'debit'],
+    required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  description: String,
+  senderDetails: {
+    name: String,
+    username: String
+  },
+  recipientDetails: {
+    name: String,
+    username: String
   }
-});
+}, { timestamps: true });
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 module.exports = Transaction;
