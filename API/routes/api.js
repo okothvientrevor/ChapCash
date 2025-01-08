@@ -234,7 +234,7 @@ router.post('/payments', authenticateToken, async (req, res) => {
       userId: sender._id,
       amount: -amount,
       type: 'debit',
-      description: `Payment to @${recipient.username}: ${description}`,
+      description: `${description}`,
       senderDetails: {
         name: sender.name,
         username: sender.username
@@ -249,7 +249,7 @@ router.post('/payments', authenticateToken, async (req, res) => {
       userId: recipient._id,
       amount,
       type: 'credit',
-      description: `Payment from @${sender.username}: ${description}`,
+      description: `${description}`,
       senderDetails: {
         name: sender.name,
         username: sender.username
