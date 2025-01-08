@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../controllers/user_controller.dart';
 import '../controllers/transaction_controller.dart';
 import '../controllers/auth_controller.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -13,6 +14,7 @@ class HomeScreen extends StatelessWidget {
   final userController = Get.find<UserController>();
   final transactionController = Get.find<TransactionController>();
   final authController = Get.find<AuthController>();
+  final NumberFormat currencyFormat = NumberFormat('#,##0', 'en_US');
 
   @override
   void onInit() {
@@ -127,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 8),
                       Obx(() => Text(
                             showBalance.value
-                                ? 'UGX ${userController.profile.value['balance']?.toStringAsFixed(2) ?? '0.00'}'
+                                ? 'UGX ${currencyFormat.format(userController.profile.value['balance'] ?? 0.00)}'
                                 : '••••••',
                             style: const TextStyle(
                               color: Colors.white,
@@ -273,7 +275,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           Text(
-            '${amount >= 0 ? '+' : ''}\$${amount.toStringAsFixed(2)}',
+            '${amount >= 0 ? '+' : ''}UGX ${currencyFormat.format(amount)}',
             style: TextStyle(
               color: amount >= 0 ? Colors.green : Colors.red,
               fontSize: 16,
