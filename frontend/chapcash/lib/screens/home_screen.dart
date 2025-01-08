@@ -15,6 +15,7 @@ class HomeScreen extends StatelessWidget {
   final transactionController = Get.find<TransactionController>();
   final authController = Get.find<AuthController>();
   final NumberFormat currencyFormat = NumberFormat('#,##0', 'en_US');
+  final DateFormat dateFormat = DateFormat('dd MMM yyyy | HH:mm');
 
   @override
   void onInit() {
@@ -192,17 +193,12 @@ class HomeScreen extends StatelessWidget {
                       height:
                           300, // Set the desired height for the scrollable section
                       child: ListView.builder(
-                        physics:
-                            const BouncingScrollPhysics(), // Smooth scrolling effect
+                        physics: const BouncingScrollPhysics(),
                         itemCount: transactionController.transactions.length,
                         itemBuilder: (context, index) {
                           final transaction =
                               transactionController.transactions[index];
-                          return _buildTransactionItem(
-                            transaction['description'] ?? 'Transaction',
-                            DateTime.parse(transaction['createdAt']),
-                            transaction['amount'].toDouble(),
-                          );
+                          return _buildTransactionItem(transaction);
                         },
                       ),
                     );
@@ -263,42 +259,79 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionItem(String title, DateTime date, double amount) {
+  Widget _buildTransactionItem(Map<String, dynamic> transaction) {
+    final DateTime date = DateTime.parse(transaction['createdAt']);
+    final double amount = transaction['amount'].toDouble();
+    final bool isCredit = amount > 0;
+
+    // Get the relevant name based on transaction type
+    String transactionParty = '';
+    if (transaction['senderDetails'] != null &&
+        transaction['recipientDetails'] != null) {
+      transactionParty = isCredit
+          ? transaction['senderDetails']['name']
+          : transaction['recipientDetails']['name'];
+    }
+
+    // Determine transaction type
+    String transactionType = isCredit ? 'Received from' : 'Sent to';
+
+    if (transaction['type'] == 'deposit') {
+      transactionType = 'Deposit to Account';
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // Top row with date and amount
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              Text(
-                '${date.day}/${date.month}/${date.year}',
+                dateFormat.format(date),
                 style: TextStyle(
                   color: Colors.grey[400],
                   fontSize: 12,
                 ),
               ),
+              Text(
+                '${isCredit ? '+' : ''}UGX ${currencyFormat.format(amount.abs())}',
+                style: TextStyle(
+                  color: isCredit ? Colors.green : Colors.red,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
+
+          // Middle row with name in bold
+          if (transactionParty.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              transactionParty,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+
+          // Bottom row with transaction type
+          const SizedBox(height: 4),
           Text(
-            '${amount >= 0 ? '+' : ''}UGX ${currencyFormat.format(amount)}',
+            transaction['description'] ?? transactionType,
             style: TextStyle(
-              color: amount >= 0 ? Colors.green : Colors.red,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              color: Colors.grey[400],
+              fontSize: 12,
             ),
           ),
         ],

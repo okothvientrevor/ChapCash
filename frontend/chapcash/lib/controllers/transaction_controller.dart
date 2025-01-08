@@ -30,11 +30,13 @@ class TransactionController extends GetxController {
         }),
       );
 
+      final responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
         await getTransactionHistory();
         await userController.getProfile();
       } else {
-        error.value = 'Error processing deposit';
+        error.value = responseData['error'] ?? 'Error processing deposit';
       }
     } catch (e) {
       error.value = 'Connection error';
@@ -43,7 +45,8 @@ class TransactionController extends GetxController {
     }
   }
 
-  Future<void> sendPayment(String recipientUsername, double amount) async {
+  Future<void> sendPayment(
+      String recipientUsername, double amount, String description) async {
     try {
       isLoading.value = true;
       error.value = '';
@@ -57,14 +60,17 @@ class TransactionController extends GetxController {
         body: json.encode({
           'recipientUsername': recipientUsername,
           'amount': amount,
+          'description': description,
         }),
       );
+
+      final responseData = json.decode(response.body);
 
       if (response.statusCode == 201) {
         await getTransactionHistory();
         await userController.getProfile();
       } else {
-        error.value = response.body;
+        error.value = responseData['error'] ?? 'Error processing payment';
       }
     } catch (e) {
       error.value = 'Connection error';
@@ -86,12 +92,13 @@ class TransactionController extends GetxController {
         },
       );
 
+      final responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
         transactions.value =
-            data.map((item) => item as Map<String, dynamic>).toList();
+            List<Map<String, dynamic>>.from(responseData['transactions']);
       } else {
-        error.value = 'Error fetching transactions';
+        error.value = responseData['error'] ?? 'Error fetching transactions';
       }
     } catch (e) {
       error.value = 'Connection error';

@@ -146,6 +146,15 @@ class SendPaymentScreen extends StatelessWidget {
                     fillColor: Colors.white.withOpacity(0.1),
                   ),
                 ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: controller.descriptionController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'What is this payment for?',
+                  ),
+                ),
                 const SizedBox(height: 32),
                 Obx(() => SizedBox(
                       width: double.infinity,

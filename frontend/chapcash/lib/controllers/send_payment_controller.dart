@@ -1,10 +1,10 @@
-import 'package:chapcash/widgets/custom_alert_dialog.dart';
-import 'package:chapcash/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import '../controllers/transaction_controller.dart';
 import '../controllers/user_controller.dart';
+import '../widgets/custom_alert_dialog.dart';
+import '../widgets/custom_snack_bar.dart';
 
 class SendPaymentController extends GetxController {
   final TransactionController transactionController =
@@ -13,6 +13,7 @@ class SendPaymentController extends GetxController {
 
   final recipientController = TextEditingController();
   final amountController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   final isRecipientVerified = false.obs;
   final recipientFullName = ''.obs;
@@ -27,6 +28,7 @@ class SendPaymentController extends GetxController {
     _debounceTimer?.cancel();
     recipientController.dispose();
     amountController.dispose();
+    descriptionController.dispose();
     super.onClose();
   }
 
@@ -77,6 +79,14 @@ class SendPaymentController extends GetxController {
   }
 
   void showConfirmationDialog(BuildContext context, double amount) {
+    if (descriptionController.text.trim().isEmpty) {
+      CustomSnackbar.showError(
+        title: 'Missing Description',
+        message: 'Please provide a description for the payment.',
+      );
+      return;
+    }
+
     Get.dialog(
       AlertDialog(
         backgroundColor: Colors.grey[900],
@@ -84,9 +94,28 @@ class SendPaymentController extends GetxController {
           'Confirm Payment',
           style: TextStyle(color: Colors.white),
         ),
-        content: Text(
-          'Are you sure you want to send UGX ${amount.toStringAsFixed(2)} to ${recipientFullName.value}?',
-          style: const TextStyle(color: Colors.white),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Are you sure you want to send:',
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Amount: UGX ${amount.toStringAsFixed(2)}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            Text(
+              'To: ${recipientFullName.value}',
+              style: const TextStyle(color: Colors.white),
+            ),
+            Text(
+              'Description: ${descriptionController.text}',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -115,6 +144,7 @@ class SendPaymentController extends GetxController {
     await transactionController.sendPayment(
       recipientController.text,
       amount,
+      descriptionController.text.trim(),
     );
 
     if (transactionController.error.isEmpty) {
@@ -123,6 +153,13 @@ class SendPaymentController extends GetxController {
         title: 'Success',
         message: 'Payment sent successfully',
       );
+
+      // Clear the form
+      recipientController.clear();
+      amountController.clear();
+      descriptionController.clear();
+      isRecipientVerified.value = false;
+      recipientFullName.value = '';
     } else {
       CustomSnackbar.showError(
         title: 'Error',

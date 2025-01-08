@@ -49,11 +49,11 @@ class DepositScreen extends StatelessWidget {
                   prefixStyle: const TextStyle(color: Colors.white),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.grey),
+                    borderSide: const BorderSide(color: Colors.white),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.purple),
+                    borderSide: const BorderSide(color: Colors.blue),
                   ),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.1),
@@ -109,7 +109,7 @@ class DepositScreen extends StatelessWidget {
                             },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.purple,
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -119,9 +119,9 @@ class DepositScreen extends StatelessWidget {
                           : const Text(
                               'Deposit',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                     ),
                   )),
