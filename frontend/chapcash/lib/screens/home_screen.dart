@@ -1,3 +1,5 @@
+import 'package:chapcash/screens/deposit_screen.dart';
+import 'package:chapcash/screens/send_payment_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/user_controller.dart';
@@ -200,10 +202,12 @@ class HomeScreen extends StatelessWidget {
           case 'Deposit':
             // Handle deposit
             print('Deposit tapped');
+            Get.to(() => DepositScreen());
             break;
           case 'Send':
             // Handle send
             print('Send tapped');
+            Get.to(() => SendPaymentScreen());
             break;
           case 'Withdraw':
             // Handle withdraw
