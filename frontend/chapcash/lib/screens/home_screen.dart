@@ -327,12 +327,16 @@ class HomeScreen extends StatelessWidget {
 
           // Bottom row with transaction type
           const SizedBox(height: 4),
-          Text(
-            transaction['description'] ?? transactionType,
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: 12,
-            ),
+          Row(
+            children: [
+              Text(
+                "Description: ${transaction['description'] ?? transactionType}",
+                style: TextStyle(
+                  color: Colors.grey[400],
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),

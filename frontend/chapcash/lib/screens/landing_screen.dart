@@ -15,35 +15,27 @@ class LandingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.account_balance_wallet,
-                size: 100,
-                color: Colors.blue,
+              Image.asset(
+                'assets/logos/chapcash_logo.png',
+                height: 200,
               ),
-              const SizedBox(height: 48),
-              const Text(
-                'Welcome to\nTransaction App',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 28),
               ElevatedButton(
                 onPressed: () => Get.toNamed(AppRoutes.LOGIN),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(16),
-                ),
-                child: const Text('Login', style: TextStyle(fontSize: 18)),
+                    padding: const EdgeInsets.all(16), shadowColor: Colors.red),
+                child: const Text('Login',
+                    style: TextStyle(fontSize: 18, color: Colors.red)),
               ),
               const SizedBox(height: 16),
               OutlinedButton(
                 onPressed: () => Get.toNamed(AppRoutes.REGISTER),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
+                  side: const BorderSide(color: Colors.red),
                 ),
-                child: const Text('Register', style: TextStyle(fontSize: 18)),
+                child: const Text('Register',
+                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ],
           ),
