@@ -6,7 +6,7 @@ import '../controllers/transaction_controller.dart';
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put(AuthController()); // This should be in a separate auth binding
+    Get.put(AuthController());
     Get.put(UserController());
     Get.put(TransactionController());
   }

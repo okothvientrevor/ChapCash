@@ -1,5 +1,6 @@
 import 'package:chapcash/bindings/app_binding.dart';
 import 'package:chapcash/screens/main_screen.dart';
+import 'package:chapcash/screens/register_screen.dart';
 import 'package:get/get.dart';
 import '../screens/home_screen.dart';
 import '../screens/landing_screen.dart';
@@ -24,6 +25,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.MAIN,
       page: () => const MainScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.REGISTER,
+      page: () => const RegisterScreen(),
     ),
   ];
 }
