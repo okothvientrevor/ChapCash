@@ -13,7 +13,7 @@ class MainScreen extends StatelessWidget {
 
     final screens = [
       HomeScreen(),
-      const ActivityScreen(),
+      ActivityScreen(),
       ProfileScreen(),
     ];
 

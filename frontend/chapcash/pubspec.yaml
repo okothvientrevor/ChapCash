@@ -38,6 +38,7 @@ dependencies:
   http: ^1.2.2
   get_storage: ^2.1.1
   intl: ^0.20.1
+  data_table_2: ^2.5.18
 
 dev_dependencies:
   flutter_test:
